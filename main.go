@@ -30,7 +30,16 @@ func index(w http.ResponseWriter, req *http.Request) {
 	}
 	t.Execute(w, "./templates/index.html")
 
-	//fmt.Println("IS THIS AT ALL WORKING???")
+}
+
+func colors(w http.ResponseWriter, req *http.Request) {
+	name := req.URL.Query().Get("name")
+	log.Println(name)
+
+	// s := `./templates/colors.html`
+	// t := template.Must(template.New("test").Parse(s))
+	t, _ := template.ParseFiles("./templates/colors.html")
+	t.Execute(w, name)
 }
 
 func GetPersonEndpoint(w http.ResponseWriter, req *http.Request) {
@@ -52,7 +61,7 @@ func GetPeopleEndpoint(w http.ResponseWriter, req *http.Request) {
 func CreatePersonEndpoint(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	var person Person
-	_ = json.NewDecoder(req.Body).Decode(&person)
+	_ = json.NewDecoder(req.Body).Decode(&person) // ?? what does this line do exactly?
 	person.ID = params["id"]
 	people = append(people, person)
 	json.NewEncoder(w).Encode(people)
@@ -81,6 +90,7 @@ func main() {
 	router.HandleFunc("/people/{id}", CreatePersonEndpoint).Methods("POST")
 	router.HandleFunc("/people/{id}", DeletePersonEndpoint).Methods("DELETE")
 	router.HandleFunc("/", index).Methods("GET")
+	router.HandleFunc("/colors", colors).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":12345", router))
 
