@@ -28,6 +28,7 @@ type Color struct {
 }
 
 var colors []Color
+
 var green = Color{ID: "4", Name: "green"}
 
 func index(w http.ResponseWriter, req *http.Request) {
@@ -42,8 +43,18 @@ func index(w http.ResponseWriter, req *http.Request) {
 func favoriteColor(w http.ResponseWriter, req *http.Request) {
 	name := req.URL.Query().Get("name")
 	log.Println(name)
-	t, _ := template.ParseFiles("./templates/favoriteColor.html")
-	t.Execute(w, green)
+	t, err := template.ParseFiles("./templates/favoriteColor.html")
+	if err != nil {
+		log.Printf("%v", err)
+	}
+	// color := generateRandomColor()
+
+	t.Execute(w, colors)
+}
+
+func generateRandomColor() Color {
+	var color = Color{ID: "5", Name: "purple"}
+	return color
 }
 
 // func GetPersonEndpoint(w http.ResponseWriter, req *http.Request) {
@@ -87,8 +98,8 @@ func favoriteColor(w http.ResponseWriter, req *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	colors = append(colors, Color{ID: "1", Name: "blue"})
-	colors = append(colors, Color{ID: "1", Name: "red"})
-	colors = append(colors, Color{ID: "1", Name: "yellow"})
+	colors = append(colors, Color{ID: "2", Name: "red"})
+	colors = append(colors, Color{ID: "3", Name: "yellow"})
 	// people = append(people, Person{ID: "1", Firstname: "Guin", Lastname: "Awesome", Address: &Address{City: "Seattle", State: "WA"}})
 	// people = append(people, Person{ID: "2", Firstname: "Brendan", Lastname: "Batman"})
 
