@@ -67,14 +67,14 @@ func addNewColor(w http.ResponseWriter, req *http.Request) {
 	log.Println("ADDNEWCOLOR CALLED")
 
 	newName := req.URL.Query().Get("newColor")
-	log.Println("New Name", newName)
+
 	// if field was empty
 	if newName == "" {
 		http.Redirect(w, req, "/newColorForm", http.StatusFound)
 	}
 	newColor := Color{Name: newName}
 	colors = append(colors, newColor)
-	log.Println(newColor.Name)
+
 	http.Redirect(w, req, "/", http.StatusFound)
 }
 
@@ -120,6 +120,8 @@ func addNewColor(w http.ResponseWriter, req *http.Request) {
 // }
 
 func main() {
+
+	log.Println("main is running")
 	router := mux.NewRouter()
 	colors = append(colors, Color{ID: 1, Name: "blue"})
 	colors = append(colors, Color{ID: 2, Name: "red"})
