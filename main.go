@@ -20,7 +20,22 @@ type Color struct {
 
 var colors []Color
 
-// var green = Color{ID: "4", Name: "green"}
+//assign global database variable
+var db *sql.DB
+
+//run this at start??
+func init() {
+	var err error
+	db, err = sql.Open("mysql", "root@tcp(a3d1318d1fe4111e6a2240a13f4ea03d-294149056.us-west-2.elb.amazonaws.com:3306)/myfirstgoapp")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err = db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+}
 
 func index(w http.ResponseWriter, req *http.Request) {
 	t, err := template.ParseFiles("./templates/index.html")
@@ -67,71 +82,43 @@ func newColorForm(w http.ResponseWriter, req *http.Request) {
 }
 
 func addNewColor(w http.ResponseWriter, req *http.Request) {
-	log.Println("ADDNEWCOLOR CALLED")
+	log.Println("addnewcolor is running")
 
+	// get color name
 	newName := req.URL.Query().Get("newColor")
 
 	// if field was empty
 	if newName == "" {
 		http.Redirect(w, req, "/newColorForm", http.StatusFound)
 	}
-	newColor := Color{Name: newName}
-	colors = append(colors, newColor)
+
+	log.Println(newName)
+
+	_, err := db.Exec("INSERT INTO colors (id, name) VALUES($1, $2)", 0, newName)
+	if err != nil {
+		log.Fatal(err)
+		// http.Error(w, http.StatusText(500), 500)
+		return
+	}
+	//
+	// rowsAffected, err := result.RowsAffected()
+	// if err != nil {
+	//   http.Error(w, http.StatusText(500), 500)
+	//   return
+	// }
+	//
+	// log.Println("")
+
+	// newColor := Color{Name: newName}
+
+	// colors = append(colors, newColor)
 
 	http.Redirect(w, req, "/", http.StatusFound)
 }
 
-// var color = Color{ID: "5", Name: "purple"}
-// return color
-
-// func GetPersonEndpoint(w http.ResponseWriter, req *http.Request) {
-// 	params := mux.Vars(req)
-// 	for _, item := range people {
-// 		if item.ID == params["id"] {
-// 			json.NewEncoder(w).Encode(item)
-// 			return
-// 		}
-//
-// 	}
-// 	json.NewEncoder(w).Encode(&Person{})
-// }
-//
-// func GetPeopleEndpoint(w http.ResponseWriter, req *http.Request) {
-// 	json.NewEncoder(w).Encode(people)
-// }
-//
-// func CreatePersonEndpoint(w http.ResponseWriter, req *http.Request) {
-// 	params := mux.Vars(req)
-// 	var person Person
-// 	_ = json.NewDecoder(req.Body).Decode(&person) // ?? what does this line do exactly?
-// 	person.ID = params["id"]
-// 	people = append(people, person)
-// 	json.NewEncoder(w).Encode(people)
-// }
-//
-// func DeletePersonEndpoint(w http.ResponseWriter, req *http.Request) {
-// 	params := mux.Vars(req)
-// 	for index, item := range people {
-// 		if item.ID == params["id"] {
-// 			// the following line slices right before current index, and right after, skipping the current index.
-// 			// Read up on the ... in Go.
-// 			people = append(people[:index], people[index+1:]...)
-// 			break
-// 		}
-// 	}
-// 	json.NewEncoder(w).Encode(people)
-// }
-
 func main() {
 
 	log.Println("main is running")
-
-	//get database
-	db, err := sql.Open("mysql", "root@tcp(a3d1318d1fe4111e6a2240a13f4ea03d-294149056.us-west-2.elb.amazonaws.com:3306)/myfirstgoapp")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
 
 	// get rows
 	rows, err := db.Query("SELECT * FROM colors")
@@ -140,28 +127,26 @@ func main() {
 	}
 	defer rows.Close()
 
+	//rows is a funny database type, so we scan them. Scan will assign the values found in the row to a
+	//new empty Color by field.
 	for rows.Next() {
 		var color = Color{}
 		err := rows.Scan(&color.ID, &color.Name)
 		if err != nil {
 			log.Fatal(err)
 		}
+		// append each color ot colors slice
 		colors = append(colors, color)
 	}
 	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
-
+	//check output in terminal
 	for _, color := range colors {
 		log.Println(color.Name)
 	}
 
 	router := mux.NewRouter()
-	// colors = append(colors, Color{ID: 1, Name: "blue"})
-	// colors = append(colors, Color{ID: 2, Name: "red"})
-	// colors = append(colors, Color{ID: 3, Name: "yellow"})
-	// people = append(people, Person{ID: "1", Firstname: "Guin", Lastname: "Awesome", Address: &Address{City: "Seattle", State: "WA"}})
-	// people = append(people, Person{ID: "2", Firstname: "Brendan", Lastname: "Batman"})
 
 	// router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
 	// router.HandleFunc("/people/{id}", GetPersonEndpoint).Methods("GET")
