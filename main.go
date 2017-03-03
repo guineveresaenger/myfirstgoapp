@@ -69,7 +69,6 @@ func generateRandomColor(seedNum int) Color {
 			return color
 		}
 	}
-
 	return Color{}
 }
 
@@ -111,9 +110,9 @@ func addNewColor(w http.ResponseWriter, req *http.Request) {
 	//
 	// log.Println("")
 
-	// newColor := Color{Name: newName}
+	newColor := Color{Name: newName}
 
-	// colors = append(colors, newColor)
+	colors = append(colors, newColor)
 
 	http.Redirect(w, req, "/", http.StatusFound)
 }
