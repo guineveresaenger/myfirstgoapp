@@ -1,6 +1,6 @@
 FROM golang
 
-ADD myfirstgoapp.go /
+ADD main.go /
 ADD templates/* /templates/
 
 RUN go build -o /myfirstgoapp /main.go
