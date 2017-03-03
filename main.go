@@ -42,7 +42,7 @@ func index(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	t.Execute(w, "/templates/index.html")
+	t.Execute(w, colors)
 
 }
 
@@ -96,8 +96,7 @@ func addNewColor(w http.ResponseWriter, req *http.Request) {
 
 	_, err := db.Exec("INSERT INTO colors (id, name) VALUES(?, ?)", 0, newName)
 	if err != nil {
-		log.Fatal(err)
-		// http.Error(w, http.StatusText(500), 500)
+		http.Error(w, http.StatusText(500), 500)
 		return
 	}
 	log.Println("color", newName, "inserted")
@@ -113,6 +112,31 @@ func addNewColor(w http.ResponseWriter, req *http.Request) {
 	newColor := Color{Name: newName}
 
 	colors = append(colors, newColor)
+
+	http.Redirect(w, req, "/", http.StatusFound)
+}
+
+func deleteColor(w http.ResponseWriter, req *http.Request) {
+	log.Println("delete color running")
+
+	name := req.URL.Query().Get("deleteColor")
+	log.Println(name)
+
+	_, err := db.Exec("DELETE FROM colors WHERE name=?", name)
+	if err != nil {
+
+		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+	log.Println("color", name, "deleted")
+
+	// remove color from colors
+	for index, color := range colors {
+		if color.Name == name {
+			colors = append(colors[:index], colors[index+1:]...)
+			break
+		}
+	}
 
 	http.Redirect(w, req, "/", http.StatusFound)
 }
@@ -153,6 +177,7 @@ func main() {
 	router.HandleFunc("/favoriteColor", favoriteColor).Methods("GET")
 	router.HandleFunc("/addNewColor", addNewColor).Methods("GET")
 	router.HandleFunc("/newColorForm", newColorForm).Methods("GET")
+	router.HandleFunc("/deleteColor", deleteColor).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":12345", router))
 

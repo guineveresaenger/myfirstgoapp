@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>Go Color Picker</title>
   </head>
   <body>
     <h1>Welcome to the Color Picker!</h1>
@@ -11,9 +11,27 @@
       <button type="submit">Submit</button>
 
     </form>
+      <div>
+        <p>
+          These are all the possible colors we can pick for you. If you don't like one, simply delete it from the database.
+          <ul>
+            {{ range $color := . }}
+            <li>
+              {{$color.Name}}
+              <form action="/deleteColor" method="get">
+                <input type="hidden" name="deleteColor" value="{{$color.Name}}">
+                <button type="submit">Delete me!</button>
+              </form>
+            </li>
+            {{ end }}
+          </ul>
+        </p>
+
+
+      </div>
     <p>
-    <a href="/newColorForm">Add a new color, just for fun!</a>
-  </p>
+      <a href="/newColorForm">Add a new color, just for fun!</a>
+    </p>
   </body>
 
   <a href="/addNewColor"></a>
