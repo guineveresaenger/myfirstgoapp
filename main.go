@@ -149,10 +149,6 @@ func main() {
 
 	router := mux.NewRouter()
 
-	// router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
-	// router.HandleFunc("/people/{id}", GetPersonEndpoint).Methods("GET")
-	// router.HandleFunc("/people/{id}", CreatePersonEndpoint).Methods("POST")
-	// router.HandleFunc("/people/{id}", DeletePersonEndpoint).Methods("DELETE")
 	router.HandleFunc("/", index).Methods("GET")
 	router.HandleFunc("/favoriteColor", favoriteColor).Methods("GET")
 	router.HandleFunc("/addNewColor", addNewColor).Methods("GET")

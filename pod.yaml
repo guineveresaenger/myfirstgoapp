@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myfirstgoapp
+  labels:
+    app: myfirstgoapp
+spec:
+  containers:
+    - name: myfirstgoapp
+      image: quay.io/guineveresaenger/guinsfirstgoapp:latest
+      ports:
+      - containerPort: 12345
