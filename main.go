@@ -26,7 +26,7 @@ var db *sql.DB
 //run this at start??
 func init() {
 	var err error
-	db, err = sql.Open("mysql", "root@tcp(a3d1318d1fe4111e6a2240a13f4ea03d-294149056.us-west-2.elb.amazonaws.com:3306)/myfirstgoapp")
+	db, err = sql.Open("mysql", "root@tcp(ae80bf560ffd111e6ac3f06ff6ffae64-2060924781.us-west-2.elb.amazonaws.com:3306)/myfirstgoapp")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func init() {
 	if err = db.Ping(); err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	// defer db.Close()
 }
 
 func index(w http.ResponseWriter, req *http.Request) {
@@ -90,16 +90,18 @@ func addNewColor(w http.ResponseWriter, req *http.Request) {
 	// if field was empty
 	if newName == "" {
 		http.Redirect(w, req, "/newColorForm", http.StatusFound)
+		return
 	}
 
 	log.Println(newName)
 
-	_, err := db.Exec("INSERT INTO colors (id, name) VALUES($1, $2)", 0, newName)
+	_, err := db.Exec("INSERT INTO colors (id, name) VALUES(?, ?)", 0, newName)
 	if err != nil {
 		log.Fatal(err)
 		// http.Error(w, http.StatusText(500), 500)
 		return
 	}
+	log.Println("color", newName, "inserted")
 	//
 	// rowsAffected, err := result.RowsAffected()
 	// if err != nil {
