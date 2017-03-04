@@ -17,6 +17,7 @@
           <ul>
             {{ range $color := . }}
             <li>
+              hello
               {{$color.Name}}
               <form action="/deleteColor" method="get">
                 <input type="hidden" name="deleteColor" value="{{$color.Name}}">
