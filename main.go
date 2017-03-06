@@ -38,7 +38,7 @@ func init() {
 }
 
 func index(w http.ResponseWriter, req *http.Request) {
-	t, err := template.ParseFiles("/templates/index.html")
+	t, err := template.ParseFiles("./templates/index.html")
 	if err != nil {
 		log.Printf("%v", err)
 	}
@@ -50,7 +50,7 @@ func favoriteColor(w http.ResponseWriter, req *http.Request) {
 	name := req.URL.Query().Get("name")
 	log.Println(name)
 	log.Println(colors)
-	t, err := template.ParseFiles("/templates/favoriteColor.html")
+	t, err := template.ParseFiles("./templates/favoriteColor.html")
 	if err != nil {
 		log.Printf("%v", err)
 	}
@@ -73,11 +73,11 @@ func generateRandomColor(seedNum int) Color {
 }
 
 func newColorForm(w http.ResponseWriter, req *http.Request) {
-	t, err := template.ParseFiles("/templates/newColorForm.html")
+	t, err := template.ParseFiles("./templates/newColorForm.html")
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	t.Execute(w, "/templates/newColorForm.html")
+	t.Execute(w, "./templates/newColorForm.html")
 }
 
 func addNewColor(w http.ResponseWriter, req *http.Request) {
@@ -142,7 +142,7 @@ func deleteColor(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-
+	defer db.Close()
 	log.Println("main is running")
 
 	// get rows
