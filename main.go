@@ -26,7 +26,7 @@ var db *sql.DB
 //run this at start??
 func init() {
 	var err error
-	db, err = sql.Open("mysql", "root@tcp(ae80bf560ffd111e6ac3f06ff6ffae64-2060924781.us-west-2.elb.amazonaws.com:3306)/myfirstgoapp")
+	db, err = sql.Open("mysql", "root@tcp(10.33.59.111:3306)/myfirstgoapp")
 	if err != nil {
 		log.Fatal(err)
 	}
