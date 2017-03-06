@@ -142,7 +142,6 @@ func deleteColor(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	defer db.Close()
 	log.Println("main is running")
 
 	// get rows
