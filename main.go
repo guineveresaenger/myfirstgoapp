@@ -144,7 +144,6 @@ func deleteColor(w http.ResponseWriter, req *http.Request) {
 func main() {
 
 	log.Println("main is running")
-	defer db.Close()
 
 	// get rows
 	rows, err := db.Query("SELECT * FROM colors")
